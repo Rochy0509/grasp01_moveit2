@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="grasp01_description">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import grasp01_description urdf file -->
+    <xacro:include filename="$(find grasp01_description)/urdf/grasp01_description.urdf" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="grasp01_description.ros2_control.xacro" />
+
+
+    <xacro:grasp01_description_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>
