@@ -1,0 +1,9 @@
+<library path="grasp01_hardware">
+  <class name="grasp01_hardware/Grasp01HardwareInterface"
+         type="grasp01_hardware::Grasp01HardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ROS 2 control hardware interface for the 6-DOF grasp01 robotic arm using MyActuator RMD-X series for real-time control
+    </description>
+  </class>
+</library>

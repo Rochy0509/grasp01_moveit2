@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 project(grasp01_moveit2)
 
 find_package(ament_cmake REQUIRED)
+find_package(grasp01_hardware REQUIRED)
 
 ament_package()
 

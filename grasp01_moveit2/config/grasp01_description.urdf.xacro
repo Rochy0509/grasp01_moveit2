@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="grasp01_description">
-    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+    <!-- Define arguments -->
+    <xacro:arg name="ifname" default="can0" />
+    <xacro:arg name="cycle_time" default="1" />
+    <xacro:arg name="timeout" default="0" />
+
+    <!-- Define the argument with a default value -->
+    <xacro:arg name="initial_positions_file" default="$(find grasp01_moveit2)/config/initial_positions.yaml" />
+
+    <!-- Explicitly set the file path as a property -->
+    <xacro:property name="initial_positions_file_path" value="$(arg initial_positions_file)" />
+
+    <!-- Load the YAML file using the property -->
+    <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file_path)['initial_positions']}" scope="global" />
 
     <!-- Import grasp01_description urdf file -->
     <xacro:include filename="$(find grasp01_description)/urdf/grasp01_description.urdf" />
@@ -8,7 +20,11 @@
     <!-- Import control_xacro -->
     <xacro:include filename="grasp01_description.ros2_control.xacro" />
 
-
-    <xacro:grasp01_description_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
-
+    <!-- Call the ROS2 control macro with the loaded YAML data -->
+    <xacro:grasp01_description_ros2_control 
+        name="Grasp01Control" 
+        initial_positions="${initial_positions}" 
+        ifname="$(arg ifname)" 
+        cycle_time="$(arg cycle_time)" 
+        timeout="$(arg timeout)"/>
 </robot>

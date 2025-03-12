@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/grasp/grasp_ws/install/myactuator_rmd_hardware/include/**",
+        "/home/grasp/grasp_ws/install/grasp_rmd_ros2/include/**",
+        "/home/grasp/grasp_ws/install/grasp01_hardware/include/**",
+        "/home/grasp/grasp_ws/install/myactuator_rmd/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/grasp/grasp_ws/src/grasp01_description/include/**",
+        "/home/grasp/grasp_ws/src/grasp01_hardware/include/**",
+        "/home/grasp/grasp_ws/src/myactuator_rmd/include/**",
+        "/home/grasp/grasp_ws/src/myactuator_rmd_ros/myactuator_rmd_hardware/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

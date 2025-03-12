@@ -12,6 +12,10 @@ controller_manager:
 
 grasp01_arm_controller:
   ros__parameters:
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
     joints:
       - joint_1
       - joint_2
@@ -19,11 +23,9 @@ grasp01_arm_controller:
       - joint_4
       - joint_5
       - ee_joint
-    command_interfaces:
-      - position
-      - velocity
-      - effort
-    state_interfaces:
-      - position
-      - velocity
-      - effort
+    
+      # - velocity
+      # - effort
+    
+      # - velocity
+      # - effort
