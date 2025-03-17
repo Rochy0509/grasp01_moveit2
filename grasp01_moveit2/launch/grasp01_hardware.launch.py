@@ -1,111 +1,43 @@
-from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
-from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
-
-# MoveIt imports
-from moveit_configs_utils import MoveItConfigsBuilder
-from moveit_configs_utils.launches import (
-    generate_move_group_launch,
-    generate_moveit_rviz_launch
-)
-
-# For file/directory handling
-from ament_index_python.packages import get_package_share_directory
 import os
-import xacro
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.conditions import IfCondition
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
+from ament_index_python.packages import get_package_share_directory
+from moveit_configs_utils import MoveItConfigsBuilder
 
-def generate_robot_description(context):
-    # Get package share directory
-    grasp01_moveit2_pkg = get_package_share_directory("grasp01_moveit2")
-    xacro_file = os.path.join(grasp01_moveit2_pkg, "config", "grasp01_description.urdf.xacro")
-    initial_positions_file = os.path.join(grasp01_moveit2_pkg, "config", "initial_positions.yaml")
-
-    # Verify the initial_positions_file exists
-    if not os.path.exists(initial_positions_file):
-        raise FileNotFoundError(f"Initial positions file not found: {initial_positions_file}")
-
-    # Evaluate LaunchConfigurations with the provided context
-    ifname = LaunchConfiguration("ifname").perform(context)
-    cycle_time = LaunchConfiguration("cycle_time").perform(context)
-    timeout = LaunchConfiguration("timeout").perform(context)
-
-    # Create mappings dictionary with resolved values
-    xacro_mappings = {
-        "initial_positions_file": initial_positions_file,
-        "ifname": ifname,
-        "cycle_time": cycle_time,
-        "timeout": timeout,
-    }
-
-    # Process the Xacro file
-    robot_description_content = xacro.process_file(xacro_file, mappings=xacro_mappings).toxml()
-    return {"robot_description": robot_description_content}
-
-def generate_robot_state_publisher(context, *args, **kwargs):
-    # Publish the URDF on /robot_description
-    robot_description = generate_robot_description(context)
-    return Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        output="screen",
-        parameters=[robot_description]
-    )
-
-def generate_hardware_nodes(context, *args, **kwargs):
-    """
-    This function creates:
-    1) robot_state_publisher node
-    2) ros2_control_node (controller_manager)
-    3) spawner for joint_state_broadcaster
-    4) spawner for your grasp01_arm_controller
-    """
-    robot_description = generate_robot_description(context)
-    grasp01_moveit2_pkg = get_package_share_directory("grasp01_moveit2")
-
-    # 1) robot_state_publisher
-    rsp_node = generate_robot_state_publisher(context)
-
-    # 2) ros2_control_node
-    ros2_control_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[
-            robot_description,
-            os.path.join(grasp01_moveit2_pkg, "config", "ros2_controllers.yaml"),
-        ],
-        output="screen",
-    )
-
-    # 3) spawner for the joint_state_broadcaster
-    joint_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
-        output="screen",
-    )
-
-    # 4) spawner for your main arm controller
-    controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["grasp01_arm_controller", "--controller-manager", "/controller_manager"],
-        output="screen",
-    )
-
-    return [rsp_node, ros2_control_node, joint_state_broadcaster_spawner, controller_spawner]
 
 def generate_launch_description():
-    # 1) Declare hardware-related launch arguments
+
     launch_args = [
         DeclareLaunchArgument("ifname", default_value="can0"),
         DeclareLaunchArgument("cycle_time", default_value="1"),
         DeclareLaunchArgument("timeout", default_value="0"),
     ]
 
-    # 2) Build MoveIt config with explicit URDF and SRDF
-    #    Also load moveit_controllers.yaml for controller definitions
-    grasp01_moveit2_pkg = get_package_share_directory("grasp01_moveit2")
+    planning_scene_monitor_parameters = { "publish_planning_scene": True, "publish_geometry_updates": True, "publish_state_updates": True, 
+                                         "publish_transforms_updates": True, "publish_robot_description":True, "publish_robot_description_semantic":True}
+
+
+    # Command-line arguments
+    rviz_config_arg = DeclareLaunchArgument(
+        "rviz_config",
+        default_value="moveit.rviz",
+        description="RViz configuration file",
+    )
+
+    # db_arg = DeclareLaunchArgument(
+    #     "db", default_value="False", description="Database flag"
+    # )
+
+    ros2_control_hardware_type = DeclareLaunchArgument(
+        "ros2_control_hardware_type",
+        default_value="grasp01_hardware",
+        description="ROS 2 control hardware interface type to use for the launch file -- possible values: [mock_components, isaac]",
+    )
+
     moveit_config = (
         MoveItConfigsBuilder(
             robot_name="grasp01_description",
@@ -114,25 +46,131 @@ def generate_launch_description():
         .robot_description(file_path="config/grasp01_description.urdf.xacro")
         .robot_description_semantic(file_path="config/grasp01_description.srdf")
         .trajectory_execution(file_path="config/moveit_controllers.yaml")  # <--- LOADS CONTROLLERS
+        .robot_description_kinematics(file_path="config/kinematics.yaml")
+        .planning_pipelines(
+            pipelines=["ompl", "chomp", "pilz_industrial_motion_planner"]
+        )
         .to_moveit_configs()
     )
 
-    # 3) Launch the MoveIt move_group node
-    move_group_launch = generate_move_group_launch(moveit_config)
+    # Start the actual move_group node/action server
+    move_group_node = Node(
+        package="moveit_ros_move_group",
+        executable="move_group",
+        output="screen",
+        parameters=[moveit_config.to_dict()],
+        arguments=["--ros-args", "--log-level", "info"],
+    )
 
-    # 4) Launch MoveIt RViz
-    rviz_launch = generate_moveit_rviz_launch(moveit_config)
+    # RViz
+    rviz_base = LaunchConfiguration("rviz_config")
+    rviz_config = PathJoinSubstitution(
+        [FindPackageShare("grasp01_moveit2"), "config", rviz_base]
+    )
+    rviz_node = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        output="log",
+        arguments=["-d", rviz_config],
+        parameters=[
+            planning_scene_monitor_parameters,
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.planning_pipelines,
+            moveit_config.robot_description_kinematics,
+            moveit_config.joint_limits,
+        ],
+    )
 
-    # 5) Hardware nodes (via an OpaqueFunction)
-    hardware_action = OpaqueFunction(function=generate_hardware_nodes)
+    # Static TF
+    # static_tf_node = Node(
+    #     package="tf2_ros",
+    #     executable="static_transform_publisher",
+    #     name="static_transform_publisher",
+    #     output="log",
+    #     arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "world", "base_link"],
+    # )
 
-    # Combine everything into one LaunchDescription
-    ld = LaunchDescription(launch_args)
-    ld.add_action(move_group_launch)  # starts move_group node
-    ld.add_action(rviz_launch)        # starts RViz with MoveIt plugin
-    ld.add_action(hardware_action)    # starts hardware-related nodes
+    # Publish TF
+    robot_state_publisher = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        name="robot_state_publisher",
+        output="both",
+        parameters=[moveit_config.robot_description,
+                    moveit_config.robot_description_semantic,
+                    moveit_config.robot_description_kinematics,
+                    planning_scene_monitor_parameters],
+    )
 
-    return ld
+    # ros2_control using FakeSystem as hardware
+    ros2_controllers_path = os.path.join(
+        get_package_share_directory("grasp01_moveit2"),
+        "config",
+        "ros2_controllers.yaml",
+    )
 
-if __name__ == "__main__":
-    generate_launch_description()
+    ros2_control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics,
+            planning_scene_monitor_parameters,
+            ros2_controllers_path],
+        remappings=[
+            ("/controller_manager/robot_description", "/robot_description"),
+        ],
+        output="screen",
+    )
+
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "joint_state_broadcaster",
+            "--controller-manager",
+            "/controller_manager",
+        ],
+    )
+
+    controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["grasp01_arm_controller", "--controller-manager", "/controller_manager"],
+        output="screen",
+    )
+
+    # # Warehouse mongodb server
+    # db_config = LaunchConfiguration("db")
+    # mongodb_server_node = Node(
+    #     package="warehouse_ros_mongo",
+    #     executable="mongo_wrapper_ros.py",
+    #     parameters=[
+    #         {"warehouse_port": 33829},
+    #         {"warehouse_host": "localhost"},
+    #         {"warehouse_plugin": "warehouse_ros_mongo::MongoDatabaseConnection"},
+    #     ],
+    #     output="screen",
+    #     condition=IfCondition(db_config),
+    # )
+
+    return LaunchDescription(
+        launch_args + [
+            rviz_config_arg,
+            # db_arg,
+            ros2_control_hardware_type,
+            rviz_node,
+            # static_tf_node,
+            robot_state_publisher,
+            move_group_node,
+            ros2_control_node,
+            joint_state_broadcaster_spawner,
+            controller_spawner,
+            # panda_arm_controller_spawner,
+            # panda_hand_controller_spawner,
+            # mongodb_server_node,
+        ]
+    )

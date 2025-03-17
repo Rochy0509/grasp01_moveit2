@@ -1,0 +1,9 @@
+<library path="grasp01_controller">
+    <class name="grasp01_controller/grasp01_impedance_control"
+           type="grasp01_impedance_control::JointImpedanceController"
+           base_class_type="controller_interface::ControllerInterface">
+        <description>
+            Joint impedance controller for grasp01
+        </description>
+    </class>
+</library>

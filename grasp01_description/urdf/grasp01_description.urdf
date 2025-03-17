@@ -32,7 +32,7 @@
     </inertial>
     <visual>
       <origin
-        xyz="0 0 0"
+        xyz="-0.38605 0.058 0.11"
         rpy="0 0 0" />
       <geometry>
         <mesh
@@ -98,8 +98,8 @@
     name="joint_1"
     type="revolute">
     <origin
-      xyz="0.38681 -0.060538 -0.10561"
-      rpy="-0.01389 0.039152 0.010785" />
+      xyz="0.0 0.0 0.0"
+      rpy="0.0 0.0 0.0" />
     <parent
       link="base_link" />
     <child

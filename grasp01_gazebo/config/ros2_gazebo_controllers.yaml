@@ -39,6 +39,7 @@ joint_state_broadcaster:
 
 grasp01_impedance_control:
   ros__parameters:
+    ik_service: "/compute_ik"
     joints:
       - joint_1
       - joint_2

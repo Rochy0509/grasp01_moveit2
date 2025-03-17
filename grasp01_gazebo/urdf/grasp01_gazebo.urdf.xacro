@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="grasp01_description">
+    <!-- Define argument for initial positions -->
+    <xacro:arg name="initial_positions_file" default="$(find grasp01_moveit2)/config/initial_positions.yaml" />
+
+    <!-- Explicitly set the file path as a property -->
+    <xacro:property name="initial_positions_file_path" value="$(arg initial_positions_file)" />
+
+    <!-- Load the YAML file using the property -->
+    <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file_path)['initial_positions']}" scope="global" />
+
+    <!-- Import grasp01_description urdf file -->
+    <xacro:include filename="$(find grasp01_description)/urdf/grasp01_description.urdf" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="$(find grasp01_gazebo)/urdf/grasp01_gazebo.ros2_control.xacro" />
+
+    <!-- Call the ROS2 control macro with minimal parameters for simulation -->
+    <xacro:grasp01_gazebo_ros2_control 
+        name="Grasp01Control" 
+        initial_positions="${initial_positions}" />
+
+    <!-- Gazebo Ionic ROS2 Control Plugin for Simulation -->
+    <gazebo>
+      <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <robot_param>robot_description</robot_param>
+        <robot_param_node>robot_state_publisher</robot_param_node>
+        <parameters>$(find grasp01_gazebo)/config/ros2_gazebi_controllers.yaml</parameters>
+      </plugin>
+    </gazebo>
+</robot>

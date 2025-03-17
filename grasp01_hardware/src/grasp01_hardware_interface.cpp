@@ -151,9 +151,10 @@ std::vector<hardware_interface::StateInterface> Grasp01HardwareInterface::export
 
 std::vector<hardware_interface::CommandInterface> Grasp01HardwareInterface::export_command_interfaces() {
     std::vector<hardware_interface::CommandInterface> command_interfaces;
-    // Only export the position command interface for each joint.
     for (size_t i = 0; i < 6; ++i) {
         command_interfaces.emplace_back(joint_names_[i], hardware_interface::HW_IF_POSITION, &position_commands_[i]);
+        command_interfaces.emplace_back(joint_names_[i], hardware_interface::HW_IF_VELOCITY, &velocity_commands_[i]);
+        command_interfaces.emplace_back(joint_names_[i], hardware_interface::HW_IF_EFFORT, &effort_commands_[i]);
     }
     return command_interfaces;
 }
