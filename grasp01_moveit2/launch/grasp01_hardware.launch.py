@@ -28,6 +28,7 @@ def generate_launch_description():
         description="RViz configuration file",
     )
 
+
     # db_arg = DeclareLaunchArgument(
     #     "db", default_value="False", description="Database flag"
     # )

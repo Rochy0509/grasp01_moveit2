@@ -2,422 +2,262 @@
 <!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
-<robot
-  name="grasp01_description">
+<robot name="grasp01_description">
   <!-- Define the world link -->
   <link name="world" />
 
   <!-- Attach the robot's base link to the world with a fixed joint -->
   <joint name="world_to_base" type="fixed">
-    <origin xyz="0 0 1.2" rpy="0 0 0" />
+    <origin xyz="0 0 2.0" rpy="0 0 0" />
     <parent link="world" />
     <child link="base_link" />
   </joint>
 
-  <link
-    name="base_link">
+  <link name="base_link">
     <inertial>
-      <origin
-        xyz="0.38605 -0.11332 0.014858"
-        rpy="0 0 0" />
-      <mass
-        value="2.2301" />
-      <inertia
-        ixx="0.0057319"
-        ixy="1.671E-06"
-        ixz="2.2067E-05"
-        iyy="0.0026997"
-        iyz="7.0921E-05"
-        izz="0.0075446" />
+      <origin xyz="0.037143 0.012702 0.0051389" rpy="0 0 0" />
+      <mass value="1.3236" />
+      <inertia ixx="0.0047902" ixy="5.4349E-05" ixz="-4.4263E-05" iyy="0.0058859" iyz="8.8278E-06" izz="0.0017315" />
     </inertial>
     <visual>
-      <origin
-        xyz="-0.38605 0.058 0.11"
-        rpy="0 0 0" />
+      <origin xyz="-0.38605 0.058 0.11" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/base_link.STL" />
+        <mesh filename="package://grasp01_description/meshes/base_link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/base_link.STL" />
+        <mesh filename="package://grasp01_description/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
-  <link
-    name="link_1">
+
+  <link name="link_1">
     <inertial>
-      <origin
-        xyz="0.0063049 -0.054594 -0.00091285"
-        rpy="0 0 0" />
-      <mass
-        value="0.252" />
-      <inertia
-        ixx="0.00064504"
-        ixy="3.8276E-05"
-        ixz="1.7288E-06"
-        iyy="0.00038778"
-        iyz="2.4992E-06"
-        izz="0.00061147" />
+      <origin xyz="0.0063049 -0.05731 -0.00091294" rpy="0 0 0" />
+      <mass value="1.215" />
+      <inertia ixx="0.0008063" ixy="4.7844E-05" ixz="2.1621E-06" iyy="0.00048473" iyz="3.1242E-06" izz="0.00076434" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/link_1.STL" />
+        <mesh filename="package://grasp01_description/meshes/link_1.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.69804 0.69804 0.69804 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/link_1.STL" />
+        <mesh filename="package://grasp01_description/meshes/link_1.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="joint_1"
-    type="revolute">
-    <origin
-      xyz="0.0 0.0 0.0"
-      rpy="0.0 0.0 0.0" />
-    <parent
-      link="base_link" />
-    <child
-      link="link_1" />
-    <axis
-      xyz="0 1 0" />
-    <limit
-      lower="-1.57"
-      upper="1.57"
-      effort="0"
-      velocity="1.0" />
-    <dynamics
-      damping="0"
-      friction="0" />
+
+  <joint name="joint_1" type="revolute">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"  />
+    <parent link="base_link" />
+    <child link="link_1" />
+    <axis xyz="0 1 0" />
+    <limit lower="-1.57" upper="1.57" effort="0" velocity="0.0" />
+    <dynamics damping="0" friction="0" />
   </joint>
-  <link
-    name="link_2">
+
+  <link name="link_2">
     <inertial>
-      <origin
-        xyz="0.0051023 0.0053126 -0.09964"
-        rpy="0 0 0" />
-      <mass
-        value="0.32937" />
+      <origin xyz="0.0051023 0.0053126 -0.09964" rpy="0 0 0" />
+      <mass value="1.311" />
       <inertia
-        ixx="0.0010209"
-        ixy="3.3698E-06"
-        ixz="2.8094E-05"
-        iyy="0.0010645"
-        iyz="2.9268E-05"
-        izz="0.0004771" />
+        ixx="0.0012762"
+        ixy="4.2123E-06"
+        ixz="3.5118E-05"
+        iyy="0.0013306"
+        iyz="3.6585E-05"
+        izz="0.00059637" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/link_2.STL" />
+        <mesh filename="package://grasp01_description/meshes/link_2.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.69804 0.69804 0.69804 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/link_2.STL" />
+        <mesh filename="package://grasp01_description/meshes/link_2.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="joint_2"
-    type="revolute">
-    <origin
-      xyz="0 -0.093789 0"
-      rpy="-0.032166 -2.6262E-05 -0.0016327" />
-    <parent
-      link="link_1" />
-    <child
-      link="link_2" />
-    <axis
-      xyz="0.99871 0 0.050703" />
-    <limit
-      lower="-1.57"
-      upper="1.57"
-      effort="0"
-      velocity="1.0" />
-    <dynamics
-      damping="0"
-      friction="0" />
+
+  <joint name="joint_2" type="revolute">
+    <origin xyz="0 -0.096506 0" rpy="-0.050536 -6.4814E-05 -0.0025645" />
+    <parent link="link_1" />
+    <child link="link_2" />
+    <axis xyz="-0.99871 0 0.050703" />
+    <limit lower="-1.57" upper="1.57" effort="0" velocity="0.0" />
+    <dynamics damping="0" friction="0" />
   </joint>
+
   <link
     name="link_3">
     <inertial>
       <origin
-        xyz="0.0029333 -0.0032488 -0.060715"
+        xyz="0.0030015 -0.0031822 -0.06206"
         rpy="0 0 0" />
       <mass
-        value="0.252" />
+        value="1.215" />
       <inertia
-        ixx="0.00059715"
-        ixy="3.9536E-06"
-        ixz="6.3101E-06"
-        iyy="0.00064818"
-        iyz="-2.585E-05"
-        izz="0.00039897" />
+        ixx="0.00074643"
+        ixy="4.9421E-06"
+        ixz="7.8874E-06"
+        iyy="0.00081023"
+        iyz="-3.2312E-05"
+        izz="0.00049871" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/link_3.STL" />
+        <mesh filename="package://grasp01_description/meshes/link_3.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.69804 0.69804 0.69804 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/link_3.STL" />
+        <mesh filename="package://grasp01_description/meshes/link_3.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="joint_3"
-    type="revolute">
-    <origin
-      xyz="0.0091425 0.0094159 -0.18995"
-      rpy="-0.00021387 -0.00020798 0.0042041" />
-    <parent
-      link="link_2" />
-    <child
-      link="link_3" />
-    <axis
-      xyz="0.050641 0.049454 -0.99749" />
-    <limit
-      lower="-1.57"
-      upper="1.57"
-      effort="0"
-      velocity="1.0" />
-    <dynamics
-      damping="0"
-      friction="0" />
+
+  <joint name="joint_3" type="revolute">
+    <origin xyz="0.0090236 0.0092998 -0.1876" rpy="-0.0056952 -0.0049964 0.10683" />
+    <parent link="link_2" />
+    <child link="link_3" />
+    <axis xyz="0.050641 0.049454 0.99749" />
+    <limit lower="-1.57" upper="1.57" effort="0" velocity="0.0" />
+    <dynamics damping="0" friction="0" />
   </joint>
-  <link
-    name="link_4">
+
+  <link name="link_4">
     <inertial>
-      <origin
-        xyz="0.12701 -0.0066361 0.019741"
-        rpy="0 0 0" />
-      <mass
-        value="1.0139" />
-      <inertia
-        ixx="0.0013164"
-        ixy="-1.6196E-07"
-        ixz="-2.5328E-06"
-        iyy="0.0013338"
-        iyz="-1.6712E-05"
-        izz="0.0013928" />
+      <origin xyz="0.10729 -0.0056415 0.017123" rpy="0 0 0" />
+      <mass value="1.33" />
+     <inertia
+        ixx="0.00084301"
+        ixy="1.4953E-05"
+        ixz="-4.9692E-05"
+        iyy="0.0011228"
+        iyz="-1.0559E-05"
+        izz="0.0011576" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/link_4.STL" />
+        <mesh filename="package://grasp01_description/meshes/link_4.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.69804 0.69804 0.69804 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/link_4.STL" />
+        <mesh filename="package://grasp01_description/meshes/link_4.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="joint_4"
-    type="revolute">
-    <origin
-      xyz="0.0049917 0.0048747 -0.098324"
-      rpy="2.506 1.3895 2.5101" />
-    <parent
-      link="link_3" />
-    <child
-      link="link_4" />
-    <axis
-      xyz="0.048116 0.99749 0.051897" />
-    <limit
-      lower="-1.57"
-      upper="1.57"
-      effort="0"
-      velocity="1.0" />
-    <dynamics
-      damping="0"
-      friction="0" />
+
+  <joint name="joint_4" type="revolute">
+    <origin xyz="0.00506 0.0049414 -0.099668" rpy="2.2009 1.442 2.2049" />
+    <parent link="link_3" />
+    <child link="link_4" />
+    <axis xyz="0.048116 0.99749 0.051897" />
+    <limit lower="-1.57" upper="1.57" effort="0" velocity="0.0" />
+    <dynamics damping="0" friction="0" />
   </joint>
-  <link
-    name="link_5">
+
+  <link name="link_5">
     <inertial>
-      <origin
-        xyz="0.11107 -0.010307 0.011607"
-        rpy="0 0 0" />
-      <mass
-        value="0.60833" />
-      <inertia
-        ixx="0.00094775"
+      <origin xyz="0.10997 -0.010245 0.011433" rpy="0 0 0" />
+      <mass value="1.088" />
+      <inertia ixx="0.00094775"
         ixy="0.00021054"
-        ixz="6.5982E-05"
+        ixz="6.5983E-05"
         iyy="0.0022962"
         iyz="-3.2388E-05"
         izz="0.0022998" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/link_5.STL" />
+        <mesh filename="package://grasp01_description/meshes/link_5.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/link_5.STL" />
+        <mesh filename="package://grasp01_description/meshes/link_5.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="joint_5"
-    type="revolute">
-    <origin
-      xyz="0.13582 -0.0071752 0.021623"
-      rpy="0.47438 -0.0435 0.066585" />
-    <parent
-      link="link_4" />
-    <child
-      link="link_5" />
-    <axis
-      xyz="0.98605 -0.055724 0.15683" />
-    <limit
-      lower="-1.57"
-      upper="1.57"
-      effort="0"
-      velocity="1.0" />
-    <dynamics
-      damping="0"
-      friction="0" />
+
+  <joint name="joint_5" type="revolute">
+    <origin xyz="0.13691 -0.0072371 0.021798" rpy="-2.4329 -0.24294 -0.20316" />
+    <parent link="link_4" />
+    <child link="link_5" />
+    <axis xyz="-0.98605 -0.055724 0.15683" />
+    <limit lower="-1.57" upper="1.57" effort="0" velocity="0.0" />
+    <dynamics damping="0" friction="0" />
   </joint>
-  <link
-    name="ee_link">
+
+  <link name="ee_link">
     <inertial>
-      <origin
-        xyz="0.018277 0.00059656 0.0019381"
-        rpy="0 0 0" />
-      <mass
-        value="0.21749" />
+      <origin xyz="0.018277 0.00059656 0.0019381" rpy="0 0 0" />
+      <mass value="0.27187" />
       <inertia
-        ixx="0.00017119"
-        ixy="-5.1649E-07"
-        ixz="5.9378E-06"
-        iyy="0.00013701"
-        iyz="-1.4596E-05"
-        izz="0.00013121" />
+        ixx="0.00021399"
+        ixy="-6.4561E-07"
+        ixz="7.4222E-06"
+        iyy="0.00017126"
+        iyz="-1.8245E-05"
+        izz="0.00016401" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/ee_link.STL" />
+        <mesh filename="package://grasp01_description/meshes/ee_link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.69804 0.69804 0.69804 1"  />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://grasp01_description/meshes/ee_link.STL" />
+        <mesh filename="package://grasp01_description/meshes/ee_link.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="ee_joint"
-    type="revolute">
-    <origin
-      xyz="0.23695 -0.018844 0.029243"
-      rpy="-0.01298 -0.070854 0.046424" />
-    <parent
-      link="link_5" />
-    <child
-      link="ee_link" />
-    <axis
-      xyz="0.13258 0.83263 -0.53772" />
-    <limit
-      lower="-1.0472"
-      upper="1.0472"
-      effort="0"
-      velocity="1.0" />
-    <dynamics
-      damping="0"
-      friction="0" />
+
+  <joint name="ee_joint" type="revolute">
+    <origin xyz="0.23586 -0.018782 0.029068" rpy="-0.010928 -0.060804 0.039747" />
+    <parent link="link_5" />
+    <child link="ee_link" />
+    <axis xyz="0.13258 0.83263 -0.53772" />
+    <limit lower="-1.0472" upper="1.0472" effort="0" velocity="0.0" />
+    <dynamics damping="0" friction="0" />
   </joint>
 </robot>

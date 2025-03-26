@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000  # Hz
+    update_rate: 500  # Hz
     grasp01_arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
     joint_state_broadcaster:
@@ -8,20 +8,21 @@ controller_manager:
     grasp01_impedance_control:
       type: grasp01_controller/grasp01_impedance_control
 
-grasp01_arm_controller:
-  ros__parameters:
-    command_interfaces:
-      - position
-    state_interfaces:
-      - position
-      - velocity
-    joints:
-      - joint_1
-      - joint_2
-      - joint_3
-      - joint_4
-      - joint_5
-      - ee_joint
+
+# grasp01_arm_controller:
+#   ros__parameters:
+#     command_interfaces:
+#       - position
+#     state_interfaces:
+#       - position
+#       - velocity
+#     joints:
+#       - joint_1
+#       - joint_2
+#       - joint_3
+#       - joint_4
+#       - joint_5
+#       - ee_joint
 
 joint_state_broadcaster:
   ros__parameters:
@@ -34,35 +35,17 @@ joint_state_broadcaster:
       - ee_joint
     interfaces:
       - position
-      - velocity
-      - effort
 
 grasp01_impedance_control:
-  ros__parameters:
-    ik_service: "/compute_ik"
-    joints:
-      - joint_1
-      - joint_2
-      - joint_3
-      - joint_4
-      - joint_5
-      - ee_joint
-    command_interfaces:
-      - effort
-    state_interfaces:
-      - position
-      - velocity
-    k_gains:
-      - 1.0
-      - 1.0
-      - 1.0
-      - 1.0
-      - 1.0
-      - 1.0
-    d_gains:
-      - 0.1
-      - 0.1
-      - 0.1
-      - 0.1
-      - 0.1
-      - 0.1
+      type: grasp01_impedance_control/JointImpedanceController
+      joints:
+        - joint_1
+        - joint_2
+        - joint_3
+        - joint_4
+        - joint_5
+        - ee_joint
+      k_gains: [30.0, 30.0, 30.0, 30.0, 30.0, 30.0]  # Reduced with gravity compensation
+      d_gains: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]       # Reduced to reduce jitter
+      arm_id: grasp01_arm
+      robot_description: /robot_description

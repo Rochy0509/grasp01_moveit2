@@ -12,7 +12,7 @@
     <!-- Import grasp01_description urdf file -->
     <xacro:include filename="$(find grasp01_description)/urdf/grasp01_description.urdf" />
 
-    <!-- Import control_xacro -->
+    <!-- Import control_xacro (optional, if still needed) -->
     <xacro:include filename="$(find grasp01_gazebo)/urdf/grasp01_gazebo.ros2_control.xacro" />
 
     <!-- Call the ROS2 control macro with minimal parameters for simulation -->
@@ -20,12 +20,21 @@
         name="Grasp01Control" 
         initial_positions="${initial_positions}" />
 
-    <!-- Gazebo Ionic ROS2 Control Plugin for Simulation -->
-    <gazebo>
-      <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-        <robot_param>robot_description</robot_param>
-        <robot_param_node>robot_state_publisher</robot_param_node>
-        <parameters>$(find grasp01_gazebo)/config/ros2_gazebi_controllers.yaml</parameters>
-      </plugin>
-    </gazebo>
+    <!-- Gazebo Classic ROS2 Control Plugin -->
+     <!-- Add gazebo_ros2_control plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+      <robotParam>robot_description</robotParam>
+      <robotParamName>robot_description</robotParamName>
+      <commandInterfaces>
+        <interface>effort</interface>
+      </commandInterfaces>
+      <stateInterfaces>
+        <interface>position</interface>
+        <interface>velocity</interface>
+        <interface>effort</interface>
+      </stateInterfaces>
+      <parameters>$(find grasp01_gazebo)/config/ros2_gazebo_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
 </robot>

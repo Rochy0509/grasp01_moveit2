@@ -9,7 +9,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <exec_depend>gras01_description</exec_depend>
+  
   <exec_depend>grasp01_hardware</exec_depend>
   <exec_depend>grasp01_moveit2</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>
@@ -18,6 +18,8 @@
   <exec_depend>joint_state_broadcaster</exec_depend>
   <exec_depend>rviz2</exec_depend>
   <exec_depend>xacro</exec_depend>
+
+  <depend>gras01_description</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

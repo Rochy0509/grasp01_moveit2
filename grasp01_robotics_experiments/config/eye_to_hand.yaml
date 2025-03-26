@@ -1,0 +1,14 @@
+transforms:
+- child_frame_id: base_link
+  header:
+    frame_id: camera_color_optical_frame
+  transform:
+    rotation:
+      w: 0.5489096883688718
+      x: 0.285759029621718
+      y: -0.7230278943810465
+      z: -0.30703516891612265
+    translation:
+      x: 0.14989880956515939
+      y: -0.011590650814646733 
+      z: 0.001693206495533367

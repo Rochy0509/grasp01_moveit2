@@ -25,6 +25,15 @@ find_package(std_srvs REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(moveit_ros_planning REQUIRED)
 find_package(pinocchio REQUIRED)
+find_package(rclcpp_action REQUIRED)
+
+# Debug Pinocchio paths
+if(pinocchio_FOUND)
+  message(STATUS "Found Pinocchio: ${pinocchio_INCLUDE_DIRS}")
+  message(STATUS "Pinocchio libraries: ${pinocchio_LIBRARIES}")
+else()
+  message(FATAL_ERROR "Pinocchio not found. Please install ros-humble-pinocchio.")
+endif()
 
 # Define the library target
 add_library(
@@ -32,16 +41,22 @@ add_library(
   SHARED
   src/grasp01_impedance_control.cpp
 )
+
+# Include directories
 target_include_directories(
   ${PROJECT_NAME}
   PUBLIC
   include
   ${EIGEN3_INCLUDE_DIRS}
+  ${pinocchio_INCLUDE_DIRS}  # Ensure Pinocchio headers are included
 )
+
+# Link dependencies
 ament_target_dependencies(
   ${PROJECT_NAME}
   controller_interface
   hardware_interface
+  rclcpp_action
   moveit_core
   moveit_msgs
   pluginlib
@@ -51,14 +66,15 @@ ament_target_dependencies(
   moveit_ros_planning
 )
 
-# Link libraries to the correct target
-target_link_libraries(${PROJECT_NAME} 
-  ${moveit_ros_planning_LIBRARIES}  # Already correct
-  pinocchio::pinocchio              # Fixed: Changed 'my_library' to '${PROJECT_NAME}'
+# Link libraries
+target_link_libraries(${PROJECT_NAME}
+  ${moveit_ros_planning_LIBRARIES}
+  pinocchio::pinocchio
 )
 
 pluginlib_export_plugin_description_file(
-  controller_interface grasp01_controller.xml)
+  controller_interface grasp01_controller.xml
+)
 
 # Install rules
 install(

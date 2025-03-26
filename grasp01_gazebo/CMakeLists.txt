@@ -7,17 +7,20 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(ros_gz_sim REQUIRED)  # Replaces gazebo_ros for Ionic
+# find_package(gazebo_ros_pkgs REQUIRED)  # Replaces gazebo_ros for Ionic
 find_package(ros2_control REQUIRED)
 find_package(controller_manager REQUIRED)
 find_package(grasp01_controller REQUIRED)
 find_package(grasp01_description REQUIRED)
 find_package(grasp01_moveit2 REQUIRED)
 find_package(robot_state_publisher REQUIRED)
+find_package(gazebo_ros2_control REQUIRED)
+
+
 
 
 install(
-  DIRECTORY launch config worlds urdf
+  DIRECTORY launch config worlds urdf meshes
   DESTINATION share/${PROJECT_NAME}
 )
 

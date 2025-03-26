@@ -3,6 +3,10 @@ project(grasp01_moveit2)
 
 find_package(ament_cmake REQUIRED)
 find_package(grasp01_hardware REQUIRED)
+find_package(grasp01_description REQUIRED)
+find_package(moveit_py REQUIRED)
+
+
 
 ament_package()
 

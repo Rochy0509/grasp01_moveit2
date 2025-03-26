@@ -15,12 +15,16 @@
   <depend>grasp01_description</depend>
   <depend>grasp01_moveit2</depend>
   <depend>robot_state_publisher</depend>
-  <depend>ros_gz_sim</depend>
+  <!-- <depend>gazebo_ros_pkgs</depend> -->
+  <depend>gazebo_ros2_control</depend>
+  
+
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
+    <gazebo_ros gazebo_model_path="${prefix}/.."/>
   </export>
 </package>

@@ -208,9 +208,22 @@ hardware_interface::return_type Grasp01HardwareInterface::perform_command_mode_s
 hardware_interface::return_type Grasp01HardwareInterface::read(
     const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
     for (size_t i = 0; i < 6; ++i) {
+        // Store previous values to detect changes
+        double prev_position = position_states_[i];
+        
+        // Update current values
         position_states_[i] = async_position_states_[i].load();
         velocity_states_[i] = async_velocity_states_[i].load();
         effort_states_[i] = async_effort_states_[i].load();
+        
+        // Log state changes to help debug
+        if (std::abs(prev_position - position_states_[i]) > 0.001) {
+            RCLCPP_DEBUG(getLogger(), 
+                "Joint %s position updated: %.6f -> %.6f", 
+                joint_names_[i].c_str(),
+                prev_position, 
+                position_states_[i]);
+        }
     }
     return hardware_interface::return_type::OK;
 }
@@ -237,9 +250,15 @@ void Grasp01HardwareInterface::asyncThread(std::chrono::milliseconds const& cycl
     for (auto& actuator : actuators_) {
         actuator->setTimeout(timeout_);
     }
+    
+    // Track previous states to detect changes
+    std::array<double, 6> prev_positions{};
+    
     while (!stop_async_thread_) {
         auto const now = std::chrono::steady_clock::now();
         auto const wakeup_time = now + cycle_time;
+        
+        // Update motor control commands
         for (size_t i = 0; i < 6; ++i) {
             if (position_interface_running_) {
                 feedback_[i] = actuators_[i]->sendPositionAbsoluteSetpoint(
@@ -251,15 +270,31 @@ void Grasp01HardwareInterface::asyncThread(std::chrono::milliseconds const& cycl
                 feedback_[i] = actuators_[i]->sendTorqueSetpoint(
                     async_effort_commands_[i].load(), torque_constants_[i]);
             } else {
+                // Even if no command is running, actively poll motor status
                 feedback_[i] = actuators_[i]->getMotorStatus2();
             }
 
+            // Store previous value to detect changes
+            prev_positions[i] = async_position_states_[i].load();
+            
+            // Update the state with latest feedback
             async_position_states_[i].store(grasp01_hardware::degToRad(feedback_[i].shaft_angle));
             async_velocity_states_[i].store(grasp01_hardware::degToRad(feedback_[i].shaft_speed));
             async_effort_states_[i].store(grasp01_hardware::currentToTorque(feedback_[i].current, torque_constants_[i]));
+            
+            // Log significant changes in position
+            if (std::abs(prev_positions[i] - async_position_states_[i].load()) > 0.01) {
+                RCLCPP_DEBUG(getLogger(), 
+                    "Motor %d position changed: %.6f -> %.6f", 
+                    actuator_ids_[i],
+                    prev_positions[i], 
+                    async_position_states_[i].load());
+            }
         }
+        
         std::this_thread::sleep_until(wakeup_time);
     }
+    
     for (auto& actuator : actuators_) {
         actuator->setTimeout(std::chrono::milliseconds(0));
     }

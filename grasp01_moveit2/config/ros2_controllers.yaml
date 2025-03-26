@@ -1,12 +1,12 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000  # Hz
+    update_rate: 500  # Hz
     grasp01_arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
-    grasp01_impedance_control:
-      type: grasp01_controller/grasp01_impedance_control
+    # grasp01_impedance_control:
+    #   type: grasp01_controller/grasp01_impedance_control
 
 grasp01_arm_controller:
   ros__parameters:
@@ -37,31 +37,31 @@ joint_state_broadcaster:
       - velocity
       - effort
 
-grasp01_impedance_control:
-  ros__parameters:
-    joints:
-      - joint_1
-      - joint_2
-      - joint_3
-      - joint_4
-      - joint_5
-      - ee_joint
-    command_interfaces:
-      - effort
-    state_interfaces:
-      - position
-      - velocity
-    k_gains:
-      - 1.0
-      - 1.0
-      - 1.0
-      - 1.0
-      - 1.0
-      - 1.0
-    d_gains:
-      - 0.1
-      - 0.1
-      - 0.1
-      - 0.1
-      - 0.1
-      - 0.1
+# grasp01_impedance_control:
+#   ros__parameters:
+#     joints:
+#       - joint_1
+#       - joint_2
+#       - joint_3
+#       - joint_4
+#       - joint_5
+#       - ee_joint
+#     command_interfaces:
+#       - effort
+#     state_interfaces:
+#       - position
+#       - velocity
+#     k_gains:
+#       - 1.0
+#       - 1.0
+#       - 1.0
+#       - 1.0
+#       - 1.0
+#       - 1.0
+#     d_gains:
+#       - 0.1
+#       - 0.1
+#       - 0.1
+#       - 0.1
+#       - 0.1
+#       - 0.1
