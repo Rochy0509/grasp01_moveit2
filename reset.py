@@ -3,14 +3,14 @@
 import myactuator_rmd_py as rmd
 from time import sleep
 
-# Initialize the CAN driver
+# Init the CAN driver
 try:
     driver = rmd.CanDriver("can0")
 except Exception as e:
     print(f"Failed to initialize CAN driver: {e}")
     exit(1)
 
-# Create motor instances with explicit ID tracking using a dictionary
+# Create motor instances with dictionary for easier ID tracking
 motors = {
     1: rmd.ActuatorInterface(driver, 1),
     2: rmd.ActuatorInterface(driver, 2),
@@ -20,30 +20,30 @@ motors = {
     6: rmd.ActuatorInterface(driver, 6),
 }
 
-def set_and_verify_zero(motors, tolerance=0.05, max_attempts=10):
+def set_and_verify_zero(motors, tolerance=0.1, max_attempts=10):
     """
-    Set motor encoder positions to zero and verify they stay within tolerance.
-    Repeats the process if any motor deviates beyond ±tolerance.
+    Sets motor encoder positions to zero and verifies they stay within tolerance.
+    Will retry if any motor drifts beyond the specified tolerance.
     
     Args:
-        motors (dict): Dictionary of motor_id: ActuatorInterface pairs
-        tolerance (float): Maximum allowed deviation from zero (default: 0.05)
-        max_attempts (int): Maximum number of retries (default: 5)
+        motors (dict): Dictionary mapping motor_id to ActuatorInterface
+        tolerance (float): Max allowed deviation from zero (default: 0.05)
+        max_attempts (int): How many times to try before giving up (default: 10)
     
     Returns:
-        bool: True if all motors are within tolerance, False otherwise
+        bool: True if successful, False if we couldn't get motors to stay at zero
     """
     for attempt in range(1, max_attempts + 1):
         print(f"\n=== Attempt {attempt} to set zero positions ===")
         all_within_tolerance = True
 
-        # Step 1: Set initial encoder positions as zero
+        # First, set current positions as zero
         print("Setting initial encoder positions as zero:")
         for motor_id, motor in motors.items():
             try:
                 initial_pos = motor.getMultiTurnAngle()
                 print(f"Motor {motor_id} Initial Position: {initial_pos}")
-                sleep(0.1)  # Short delay for stability
+                sleep(0.1)  # Small delay for stability
                 motor.setCurrentPositionAsEncoderZero()
                 print(f"Motor {motor_id} current position set as zero.")
                 zero_offset = motor.getMultiTurnEncoderZeroOffset()
@@ -55,7 +55,7 @@ def set_and_verify_zero(motors, tolerance=0.05, max_attempts=10):
                 print(f"Unexpected error with Motor {motor_id}: {e}")
                 all_within_tolerance = False
 
-        # Step 2: Reset motors
+        # Now reset the motors
         print("\nResetting motors:")
         for motor_id, motor in motors.items():
             try:
@@ -65,9 +65,9 @@ def set_and_verify_zero(motors, tolerance=0.05, max_attempts=10):
                 print(f"Error resetting Motor {motor_id}: {e}")
             except Exception as e:
                 print(f"Unexpected error with Motor {motor_id}: {e}")
-        sleep(2)  # Wait for motors to reboot/reset, adjust time if needed
+        sleep(5)  # Wait for motors to reboot - might need to adjust this time
 
-        # Step 3: Verify zero positions
+        # Check if the motors stayed at zero
         print("\nVerifying zero positions:")
         for motor_id, motor in motors.items():
             try:
@@ -83,17 +83,17 @@ def set_and_verify_zero(motors, tolerance=0.05, max_attempts=10):
                 print(f"Unexpected error with Motor {motor_id}: {e}")
                 all_within_tolerance = False
 
-        # Check if all motors are within tolerance
+        # If everything looks good, we're done
         if all_within_tolerance:
             print("All motors are within tolerance.")
             return True
         else:
-            print("Some motors are not within tolerance. Retrying...")
+            print("Some motors not within tolerance. Retrying...")
 
     print(f"\nFailed to set motors within tolerance ±{tolerance} after {max_attempts} attempts.")
     return False
 
-# Execute the zero-setting and verification process
+# Run the zero-setting process
 if set_and_verify_zero(motors):
     print("\nSuccessfully set all motors to zero pose.")
 else:

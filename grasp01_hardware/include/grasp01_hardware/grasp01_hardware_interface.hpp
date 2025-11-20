@@ -87,6 +87,7 @@ protected:
     std::vector<std::uint32_t> actuator_ids_;
     std::vector<double> torque_constants_;
     std::vector<double> max_velocities_;
+    std::vector<double> directions_;
     std::vector<std::string> joint_names_;
 
     std::unique_ptr<myactuator_rmd::CanDriver> driver_;

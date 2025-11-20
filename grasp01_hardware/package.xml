@@ -2,9 +2,9 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>grasp01_hardware</name>
-  <version>0.0.0</version>
+  <version>0.0.1</version>
   <description>ROS 2 control hardware interface for a 6-DOF robotic arm (grasp01) using MyActuator RMD-X series actuators via CAN for real-time control.</description>
-  <maintainer email="your_email@example.com">Your Name</maintainer>
+  <maintainer email="kennethaldahir.martinezmoreno@ontariotechu.net">Kenneth Martinez</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>

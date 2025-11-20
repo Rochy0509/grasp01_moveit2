@@ -50,6 +50,7 @@ hardware_interface::CallbackReturn Grasp01HardwareInterface::on_init(const hardw
     actuator_ids_.resize(6);
     torque_constants_.resize(6);
     max_velocities_.resize(6);
+    directions_.resize(6, 1.0);
     joint_names_.resize(6);
     for (size_t i = 0; i < 6; ++i) {
         joint_names_[i] = info.joints[i].name;
@@ -62,6 +63,15 @@ hardware_interface::CallbackReturn Grasp01HardwareInterface::on_init(const hardw
         torque_constants_[i] = params.count("torque_constant") ?
             std::stod(params.at("torque_constant")) : std::numeric_limits<double>::quiet_NaN();
         max_velocities_[i] = params.count("max_velocity") ? std::stod(params.at("max_velocity")) : 720.0;
+        if (params.count("direction")) {
+            double dir = std::stod(params.at("direction"));
+            // Accept only +/-1 to avoid scaling errors
+            if (dir < 0.0) {
+                directions_[i] = -1.0;
+            } else {
+                directions_[i] = 1.0;
+            }
+        }
     }
 
     position_states_.resize(6, 0.0);
@@ -260,15 +270,16 @@ void Grasp01HardwareInterface::asyncThread(std::chrono::milliseconds const& cycl
         
         // Update motor control commands
         for (size_t i = 0; i < 6; ++i) {
+            double const dir = directions_[i];
             if (position_interface_running_) {
                 feedback_[i] = actuators_[i]->sendPositionAbsoluteSetpoint(
-                    grasp01_hardware::radToDeg(async_position_commands_[i].load()), max_velocities_[i]);
+                    grasp01_hardware::radToDeg(async_position_commands_[i].load() * dir), max_velocities_[i]);
             } else if (velocity_interface_running_) {
                 feedback_[i] = actuators_[i]->sendVelocitySetpoint(
-                    grasp01_hardware::radToDeg(async_velocity_commands_[i].load()));
+                    grasp01_hardware::radToDeg(async_velocity_commands_[i].load() * dir));
             } else if (effort_interface_running_) {
                 feedback_[i] = actuators_[i]->sendTorqueSetpoint(
-                    async_effort_commands_[i].load(), torque_constants_[i]);
+                    async_effort_commands_[i].load() * dir, torque_constants_[i]);
             } else {
                 // Even if no command is running, actively poll motor status
                 feedback_[i] = actuators_[i]->getMotorStatus2();
@@ -278,9 +289,9 @@ void Grasp01HardwareInterface::asyncThread(std::chrono::milliseconds const& cycl
             prev_positions[i] = async_position_states_[i].load();
             
             // Update the state with latest feedback
-            async_position_states_[i].store(grasp01_hardware::degToRad(feedback_[i].shaft_angle));
-            async_velocity_states_[i].store(grasp01_hardware::degToRad(feedback_[i].shaft_speed));
-            async_effort_states_[i].store(grasp01_hardware::currentToTorque(feedback_[i].current, torque_constants_[i]));
+            async_position_states_[i].store(dir * grasp01_hardware::degToRad(feedback_[i].shaft_angle));
+            async_velocity_states_[i].store(dir * grasp01_hardware::degToRad(feedback_[i].shaft_speed));
+            async_effort_states_[i].store(dir * grasp01_hardware::currentToTorque(feedback_[i].current, torque_constants_[i]));
             
             // Log significant changes in position
             if (std::abs(prev_positions[i] - async_position_states_[i].load()) > 0.01) {
